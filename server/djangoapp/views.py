@@ -9,6 +9,7 @@ from django.contrib import messages
 from datetime import datetime
 import logging
 import json
+from django.db import IntegrityError
 
 # Get an instance of a logger
 logger = logging.getLogger(__name__)
@@ -26,16 +27,50 @@ def contact(request):
     return render(request,'djangoapp/contact.html')
 
 # Create a `login_request` view to handle sign in request
-# def login_request(request):
-# ...
+def login_request(request):
+    if request.method == "POST":
+
+        # Attempt to sign user in
+        username = request.POST["username"]
+        password = request.POST["password"]
+        user = authenticate(request, username=username, password=password)
+
+        # Check if authentication successful
+        if user is not None:
+            login(request, user)
+            return redirect('djangoapp:index')
+        else:
+            return render(request, 'djangoapp/index.html')
+    else:
+        return render(request, 'djangoapp/index.html')
+
 
 # Create a `logout_request` view to handle sign out request
-# def logout_request(request):
-# ...
+def logout_request(request):
+    logout(request)
+    return redirect('djangoapp:index')
+
 
 # Create a `registration_request` view to handle sign up request
-# def registration_request(request):
-# ...
+def registration_request(request):
+    if request.method == "POST":
+        username = request.POST["username"]
+        password = request.POST["password"]
+        firstname = request.POST["firstname"]
+        lastname = request.POST["lastname"]
+
+        # Attempt to create new user
+        try:
+            user = User.objects.create_user(username=username, password=password, first_name=firstname, last_name=lastname)
+            user.save()
+        except IntegrityError:
+            return render(request, "djangoapp/registration.html", {
+                "message": "Username already taken."
+            })
+        login(request, user)
+        return redirect('djangoapp:index')
+    else:
+        return render(request,'djangoapp/registration.html')
 
 # Update the `get_dealerships` view to render the index page with a list of dealerships
 def get_dealerships(request):
