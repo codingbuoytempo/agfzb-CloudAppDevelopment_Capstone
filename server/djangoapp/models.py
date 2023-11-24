@@ -1,7 +1,6 @@
 from django.db import models
 from django.core import serializers
 from django.utils.timezone import now
-import uuid
 import json
 
 
@@ -30,7 +29,7 @@ class CarMake(models.Model):
 class CarModel(models.Model):
     make = models.ForeignKey(CarMake, on_delete=models.CASCADE)
     name = models.CharField(null=False, max_length=100, default='Car')
-    id = models.IntegerField(default=1,primary_key=True)
+    dealer_id = models.IntegerField(null=True)
     
     SEDAN = 'Sedan'
     SUV = 'SUV'
@@ -58,19 +57,21 @@ class CarModel(models.Model):
 # <HINT> Create a plain Python class `CarDealer` to hold dealer data
 class CarDealer:
 
-    def __init__(self, address, city, id, lat, long, st, zip):
+    def __init__(self, address, city, full_name, id, lat, long, short_name, st, zip):
         # Dealer address
         self.address = address
         # Dealer city
         self.city = city
-       
+        # Dealer Full Name
+        self.full_name = full_name
         # Dealer id
         self.id = id
         # Location lat
         self.lat = lat
         # Location long
         self.long = long
-
+        # Dealer short name
+        self.short_name = short_name
         # Dealer state
         self.st = st
         # Dealer zip
@@ -81,27 +82,20 @@ class CarDealer:
 
 # <HINT> Create a plain Python class `DealerReview` to hold review data
 class DealerReview:
-
-    def __init__(self, dealership, name, purchase, review):
-        # Required attributes
-        self.dealership = dealership
-        self.name = name
-        self.purchase = purchase
-        self.review = review
-        # Optional attributes
-        self.purchase_date = ""
-        self.purchase_make = ""
-        self.purchase_model = ""
-        self.purchase_year = ""
-        self.sentiment = ""
-        self.id = ""
-
+    def __init__(self, id, dealership, name, purchase, review, purchase_date, car_make, car_model, car_year, sentiment="neutral"):
+        self.dealership = dealership # Maybe name or id, not sure. unclear so far in instructions
+        self.name = name  # Reviewer's name
+        self.purchase = purchase  # No idea what this is. Unclear instructions. Maybe a yes/no?
+        self.review = review  # Review entry
+        self.purchase_date = purchase_date
+        self.car_make = car_make
+        self.car_model = car_model
+        self.car_year = car_year
+        self.sentiment = sentiment  # Watson NLU sentiment analysis of review
+        self.id = id  # review id
+        
     def __str__(self):
-        return "Review: " + self.review
-
-    def to_json(self):
-        return json.dumps(self, default=lambda o: o.__dict__,
-                            sort_keys=True, indent=4)
+        return "Reviewer: " + self.name + " Review: " + self.review
 
 # <HINT> Create a plain Python class `ReviewPost` to post review data
 class ReviewPost:

@@ -11,6 +11,69 @@
 
 </head>
     <body>
-    <!--Add review form here -->
+
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="#">Best Cars</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href= "{% url 'djangoapp:index' %}">Dealership Review</a>
+                    </li>
+                    <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href= "{% url 'djangoapp:about' %}">About</a>
+                    </li>
+                    <li class="nav-item">
+                    <a class="nav-link" href="{% url 'djangoapp:contact' %}">Contact</a>
+                    </li>
+                </ul>
+                </div>
+            </div>
+        </nav>
+
+        <div class="col-md">
+            <h3 class="mb-5 mt-3">Add Review for <strong> {{dealer.full_name}} </strong> </h3>
+        </div>
+
+        <form class="d-flex flex-column justify-content-center w-50" action="/djangoapp/api/add_review/{{dealer.id}}/" method="post">
+            {% csrf_token %}
+            <div class="col-auto">
+                <div class="form-group">
+                    <h5>Enter your text here:</h5>
+                    <textarea class="form-control my-2" id="content" name="content" rows="2" required></textarea>
+                </div>
+                <div class="form-group form-check"> 
+                    <input type="checkbox" class="form-check-input" name="purchasecheck" id="purchasecheck" >
+                    <label class="mx-2">Have you purchased car from {{dealer.full_name}}?</lablel>
+                </div>
+                <div class="form-group">
+                    <h5 class="my-2">Select your car (Model-Make-Year):</h5>
+                    <select name="car" id="car" class="form-select my-2 mx-2" required>
+                        {% for car in cars %}
+                            <option selected value={{car.id}}>{{car.name}}-{{car.make.name}}-{{ car.year|date:"Y" }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group" data-provide="datepicker">
+                    <label for="purchasedate">Select your purchase date:</label>
+                    <input class="date-own form-control" type="text" name="purchasedate" id="purchasedate">
+                </div>
+            <button type="submit" class="btn btn-primary my-3 align-items-center">Submit Review</button>
+        
+            </div>
+        
+        </form>
+    
+        <script type="text/javascript">
+            $('.date-own').datepicker({
+               format: 'mm/dd/yyyy'
+             });
+       </script>
+    
     </body>
 </html>
+
+{% url 'djangoapp:add_review' dealer.id %}

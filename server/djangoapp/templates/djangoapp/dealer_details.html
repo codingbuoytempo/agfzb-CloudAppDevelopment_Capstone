@@ -1,18 +1,121 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    {% load static %}
     <meta charset="UTF-8">
     <title>Dealership Review</title>
-    {% load static %}
+
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
 </head>
 
-    <body>
+<body>
 
     <!--Add a nav bar here -->
+    <!-- <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid">
+        <a class="navbar-brand" href="#">Dealership Review</a>
+        </div> -->
+
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="#">Best Cars</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href= "{% url 'djangoapp:index' %}">Dealership Review</a>
+                    </li>
+                    <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href= "{% url 'djangoapp:about' %}">About</a>
+                    </li>
+                    <li class="nav-item">
+                    <a class="nav-link" href="{% url 'djangoapp:contact' %}">Contact</a>
+                    </li>
+                </ul>
+                </div>
+            </div>
+        
+    
+
+        <ul>
+        {% if user.is_authenticated %}
+            <li>
+                <a class="btn btn-link" href="#">{{ user.first_name }}({{ user.username }})</a>
+                <a class="btn btn-link" href="{% url 'djangoapp:logout' %}">Logout</a>
+            </li>
+            {% else %}
+            <li>
+                <form class="d-flex flex-row justify-content-end">
+                    {% csrf_token %}
+                    <div class="col-auto">
+                    
+                        <input type="text" class="form-control" name="username" placeholder="Username" >
+                    </div>
+                    <div class="col-auto">
+                        
+                        <input type="password" name= "psw" class="form-control" placeholder="Password">
+                    </div>
+                    <div class="col-auto">
+                        <button type="submit" class="btn btn-primary mb-3">login</button>
+                        
+                    </div>
+                    <div class="col-auto">
+                        
+                        <!-- <button type="submit"  class="btn btn-primary mb-3"> signup</button> -->
+                        <a class="btn btn-link" href="{% url 'djangoapp:register' %}">Sign Up</a>
+                    </div>
+                </form>
+            </li>
+        {% endif %}
+        </ul>
+    </nav>
 
     <!-- Add reviews as cards -->
+    <div class="col-md mb-5 mt-3">
+        <h3> Reviews for <strong> {{ dealer.full_name }} </strong> </h3>
+    </div>
+    
+    <div class="col-md">
+    {% if reviews_list %}
+    <div class="card-columns">
+        {% for review in reviews_list %}
+            {% if review.car_make %}
+            <div class="card" style="height: 300px; overflow: scroll; overflow-x: hidden;">
+                <img src="{{MEDIA_URL}}/emoji/{{review.sentiment}}.png" class="card-img-left" style="float: left; height: 40px; width: 40px; display: inline-block;">
+                <div class="card-body" style="text-align: center;">
+                    <h5 class="card-title" style="display: inline-block;">{{ review.car_make }}, {{ review.car_model }}</h5>
+                    <h5 class="card-title">{{ review.car_year }}</h5>
+                    <p class="card-text" style="text-align: left;">{{ review.review }}</p>
+                </div>
+            </div>
+            <!-- Else was needed during development only but I have changed reviews.json to also have full details. Leaving it here just for completeness if reviews.json is not modified-->
+            {% else %}
+            <div class="card" style="height: 300px; overflow: scroll; overflow-x: hidden;">
+                <img src="{{MEDIA_URL}}/emoji/{{review.sentiment}}.png" class="card-img-left" style="float: left; height: 40px; width: 40px; display: inline-block;">
+                <div class="card-body" style="text-align: center;">
+                    <h5 class="card-title" style="display: inline-block;">Review</h5>
+                    <h5 class="card-title"></h5>
+                    <p class="card-text" style="text-align: left;">{{ review.review }}</p>
+                </div>
+            </div>
+            {% endif %}
+        {% endfor %}
+    </div>
+    {% else %}
+        <div class="card-columns">
+            <div class="card">
+                <div class="card-body bg-light">
+                    <h5 class="card-title">No reviews yet</h5>
+                    <a class="btn btn-link" href="{% url 'djangoapp:add_review' dealer.id %}">Be first to add a review?</a>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+    </div>
 
-    </body>
+
+</body>
 
 </html>

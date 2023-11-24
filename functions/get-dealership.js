@@ -21,11 +21,12 @@ async function dbCloudantConnect(dbName) {
 }
 
 let dealershipsDb;
-let reviewsDb;
+//let reviewsDb;
 
 (async () => {
     dealershipsDb = await dbCloudantConnect('dealerships');
-    reviewsDb = await dbCloudantConnect('reviews');
+//  reviewsDb = await dbCloudantConnect('fullreviews');
+//    reviewsDb = await dbCloudantConnect('reviews');
 })();
 
 app.use(express.json());
@@ -65,10 +66,10 @@ app.listen(port, () => {
 });
 
 
-// Adding the Reviews Route.
+/*// Adding the Reviews Route.
 
 // Define a route to get all reviews for a given dealership
-app.get('/api/review', (req, res) => {
+ app.get('/api/review', (req, res) => {
     const { dealerId } = req.query;
 
     const selector = {};
@@ -78,7 +79,7 @@ app.get('/api/review', (req, res) => {
 
     const queryOptions = {
         selector,
-        limit: 10,  // Adjust this value as needed
+        limit: 60,  // Adjust this value as needed
     };
 
     reviewsDb.find(queryOptions, (err, body) => {
@@ -90,4 +91,4 @@ app.get('/api/review', (req, res) => {
             res.json(reviews);
         }
     });
-});
+}); */
